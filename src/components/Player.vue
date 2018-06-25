@@ -5,7 +5,10 @@
       <div>歌曲名：{{ title }}</div>
       <div>歌手名：{{ artist }}</div>
     </div>
-    <figure :class="play ? 'playing' : 'paused'">
+    <figure
+      :class="play ? 'playing' : 'paused'"
+      @touchend="$router.push('/lrc')"
+    >
       <img :src="cover">
     </figure>
     <div class="ctl-l1">
@@ -49,6 +52,9 @@
         :class="loopType"
         @touchend="changeLoop"
       >
+      </div>
+      <div class="list-icon">
+        <router-link to="/list"></router-link>
       </div>
     </div>
   </div>
@@ -283,6 +289,13 @@ $base:100;
     }
     .single-circle {
       background-position-y: -230.5px;
+    }
+
+    .list-icon > a{
+      display: block;
+      width: 30px;
+      height: 22px;
+      background: url('./images/icons.png') no-repeat 0 -259px;
     }
   }
 }

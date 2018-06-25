@@ -20,7 +20,8 @@ export default {
     return {
       currentIndex: 0,
       loopType: 'circle',
-      play: true
+      play: true,
+      playlist
     }
   },
   components: {
@@ -28,7 +29,7 @@ export default {
   },
   computed: {
     currentSong () {
-      return playlist[this.currentIndex]
+      return this.playlist[this.currentIndex]
     }
   },
   created () {
@@ -43,17 +44,35 @@ export default {
       this.play = e
     })
     eventBus.$on('prev', () => {
-      this.currentIndex === 0 ? this.currentIndex = playlist.length - 1 : this.currentIndex--
+      this.currentIndex === 0 ? this.currentIndex = this.playlist.length - 1 : this.currentIndex--
     })
     eventBus.$on('next', () => {
       this.next()
+    })
+    eventBus.$on('routeChange', () => {
+      this.SendAppMeta()
+    })
+    eventBus.$on('changeSong', e => {
+      let index = this.playlist.findIndex(item => {
+        return item.id === e
+      })
+      this.currentIndex = index
+      this.SendAppMeta()
+    })
+    eventBus.$on('deleteSong', e => {
+      let index = this.playlist.findIndex(item => {
+        return item.id === e
+      })
+      this.playlist.splice(index, 1)
+      // if (index === this.currentIndex) this.next()
+      this.SendAppMeta()
     })
   },
   methods: {
     SendAppMeta () {
       eventBus.$emit('AppMeta', {
         loopType: this.loopType,
-        playlist,
+        playlist: this.playlist,
         currentIndex: this.currentIndex,
         currentSong: this.currentSong,
         play: this.play
@@ -61,14 +80,14 @@ export default {
     },
     next () {
       let randIndex = () => {
-        let index = Math.round(Math.random() * playlist.length) - 1
+        let index = Math.round(Math.random() * this.playlist.length) - 1
         if (index === this.currentIndex) randIndex()
         else this.currentIndex = index
       }
       switch (this.loopType) {
         case 'circle':
         case 'single-circle':
-          if (this.currentIndex < playlist.length - 1) this.currentIndex++
+          if (this.currentIndex < this.playlist.length - 1) this.currentIndex++
           else this.currentIndex = 0
           break
         case 'random':
@@ -84,6 +103,10 @@ export default {
     'currentIndex' () {
       this.SendAppMeta()
     }
+  },
+  beforeRouteUpdate (to, from, next) {
+    console.log('update')
+    next()
   }
 }
 </script>

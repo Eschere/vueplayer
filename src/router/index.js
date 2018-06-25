@@ -6,6 +6,8 @@ import Lrc from '@/components/Lrc'
 import Player from '@/components/Player'
 import List from '@/components/List'
 
+import eventBus from '@/eventBus.js'
+
 Vue.use(Router)
 
 const routes = [
@@ -35,6 +37,13 @@ const routes = [
   }
 ]
 
-export default new Router({
+let router = new Router({
   routes
 })
+
+router.beforeResolve((to, from, next) => {
+  eventBus.$emit('routeChange')
+  next()
+})
+
+export default router
