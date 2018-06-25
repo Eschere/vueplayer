@@ -21,7 +21,8 @@ export default {
       currentIndex: 0,
       loopType: 'circle',
       play: true,
-      playlist
+      playlist,
+      lrc: false
     }
   },
   components: {
@@ -34,6 +35,7 @@ export default {
   },
   created () {
     eventBus.$on('ended', () => {
+      if (this.lrc) this.play = false
       this.next()
     })
 
@@ -57,15 +59,22 @@ export default {
         return item.id === e
       })
       this.currentIndex = index
-      this.SendAppMeta()
     })
     eventBus.$on('deleteSong', e => {
       let index = this.playlist.findIndex(item => {
         return item.id === e
       })
       this.playlist.splice(index, 1)
-      // if (index === this.currentIndex) this.next()
+      if (index < this.currentIndex) this.currentIndex--
+    })
+
+    eventBus.$on('lrcReady', _ => {
+      this.play = true
       this.SendAppMeta()
+    })
+
+    eventBus.$on('lrcOn', _ => {
+      this.lrc = true
     })
   },
   methods: {
@@ -103,11 +112,11 @@ export default {
     'currentIndex' () {
       this.SendAppMeta()
     }
-  },
-  beforeRouteUpdate (to, from, next) {
-    console.log('update')
-    next()
   }
+  // beforeRouteUpdate (to, from, next) {
+  //   console.log('update')
+  //   next()
+  // }
 }
 </script>
 

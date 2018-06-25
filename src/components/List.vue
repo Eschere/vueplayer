@@ -29,7 +29,7 @@ export default {
   beforeRouteEnter (to, from, next) {
     let _playlist, _currentIndex
 
-    eventBus.$on('AppMeta', ({playlist, currentIndex}) => {
+    eventBus.$once('AppMeta', ({playlist, currentIndex}) => {
       _playlist = playlist
       _currentIndex = currentIndex
     })
