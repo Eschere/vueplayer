@@ -27,11 +27,12 @@ function lrcParser (str) {
 }
 
 function linearScroll (dom, to, from) {
-  let step
-  if (Math.abs(to - from) > 500) step = 20
-  else if (Math.abs(to - from) > 1000) step = 40
-  else step = 2
-
+  // 根据距离控制滚动速度
+  let duration = 1000
+  let distance = Math.abs(to - from)
+  if (distance < 100) duration = 400
+  let step = distance / duration * 20
+  // 向下滚动
   if (from < to) {
     if (linearScroll.timer) clearInterval(linearScroll.timer)
     linearScroll.timer = setInterval(() => {
@@ -41,6 +42,7 @@ function linearScroll (dom, to, from) {
         linearScroll.timer = null
       }
     }, 20)
+  // 向上滚动
   } else if (from > to) {
     if (linearScroll.timer) clearInterval(linearScroll.timer)
     linearScroll.timer = setInterval(() => {
@@ -52,10 +54,42 @@ function linearScroll (dom, to, from) {
     }, 20)
   }
 }
+linearScroll.stop = function () {
+  clearInterval(this.timer)
+  this.timer = null
+}
+
+/**
+ * @param lrcBox 歌词外部容器（需要滚动的容器）
+ * @param lrcContentDom 歌词内容容器
+ * @param BoxLine 歌词显示行数
+ * @param lrcLine 歌词总行数
+ * @param currentIndex 当前歌词索引 从0开始
+ * @param linear 是否渐变
+ */
+function lrcContrl (lrcBox, lrcContentDom, BoxLine, lrcLine, currentIndex, linear) {
+  let height = lrcContentDom.clientHeight
+  let offset = 0
+  let middle = Math.ceil(BoxLine / 2 - 1)
+  if (currentIndex > middle) {
+    offset = (currentIndex - middle) / lrcLine * height
+  }
+  if (currentIndex > lrcLine - 1 - (BoxLine - middle)) {
+    offset = Math.floor((lrcLine - BoxLine) / (lrcLine) * height)
+  }
+  console.log(offset, lrcBox.scrollTop)
+  if (linear) linearScroll(lrcBox, offset, lrcBox.scrollTop)
+  else lrcBox.scrollTop = offset
+}
+
+lrcContrl.stop = () => {
+  linearScroll.stop()
+}
 
 export default {
   formatTime,
   strToTime,
   lrcParser,
-  linearScroll
+  linearScroll,
+  lrcContrl
 }
