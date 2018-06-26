@@ -1,5 +1,8 @@
 <template>
-<div ref="box">
+<div
+  ref="box"
+  @touchmove="pausedLrc"
+>
   <ul ref="lrc" v-cloak>
     <li
       v-for="item in lrclist"
@@ -34,20 +37,6 @@ export default {
     next(vm => {
       vm.lrc = _currentSong.lrc
       vm.play = _play
-
-      // if (vm.play === false) return
-      // if (vm.play === false) return
-      // let height = vm.$refs.lrc.clientHeight
-      // let box = vm.$refs.box
-      // let offset = 0
-      // if (vm.activeIndex > 4) {
-      //   offset = (vm.activeIndex - 4) / (vm.lastIndex + 1) * height
-      // }
-      // if (vm.activeIndex > vm.lastIndex - 5) {
-      //   offset = Math.floor((vm.lastIndex - 9) / (vm.lastIndex + 1) * height)
-      // }
-      // // fun.linearScroll(box, offset, box.scrollTop)
-      // box.scrollTop = offset
       fun.lrcContrl(vm.$refs.box, vm.$refs.lrc, 10, vm.lastIndex + 1, vm.activeIndex, false)
     })
   },
@@ -68,16 +57,6 @@ export default {
     },
     activeIndex (val) {
       if (this.play === false) return
-      // let height = this.$refs.lrc.clientHeight
-      // let box = this.$refs.box
-      // let offset = 0
-      // if (val > 4) {
-      //   offset = (val - 4) / (this.lastIndex + 1) * height
-      // }
-      // if (val > this.lastIndex - 5) {
-      //   offset = Math.floor((this.lastIndex - 9) / (this.lastIndex + 1) * height)
-      // }
-      // fun.linearScroll(box, offset, box.scrollTop)
       fun.lrcContrl(this.$refs.box, this.$refs.lrc, 10, this.lastIndex + 1, this.activeIndex, true)
     },
     lrclist () {
@@ -99,6 +78,16 @@ export default {
       }
       return last
     }
+  },
+  methods: {
+    pausedLrc () {
+      fun.lrcContrl.stop()
+      if (this.timer) clearTimeout(this.timer)
+      this.timer = setTimeout(() => {
+        fun.lrcContrl.open()
+        delete this.timer
+      }, 3000)
+    }
   }
 }
 </script>
@@ -110,12 +99,7 @@ div{
   margin: 30px 0;
 }
 ul {
-  // display: flex;
-  // flex-direction: column;
-  // align-items: center;
   text-align: center;
-  // box-sizing: content-box;
-  // padding: 20px 0;
   li {
     height: 8vh;
     font-size: 17px;

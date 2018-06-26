@@ -68,6 +68,7 @@ linearScroll.stop = function () {
  * @param linear 是否渐变
  */
 function lrcContrl (lrcBox, lrcContentDom, BoxLine, lrcLine, currentIndex, linear) {
+  if (!lrcContrl.on) return
   let height = lrcContentDom.clientHeight
   let offset = 0
   let middle = Math.ceil(BoxLine / 2 - 1)
@@ -82,8 +83,14 @@ function lrcContrl (lrcBox, lrcContentDom, BoxLine, lrcLine, currentIndex, linea
   else lrcBox.scrollTop = offset
 }
 
-lrcContrl.stop = () => {
+// 停止歌词控制
+lrcContrl.stop = function () {
+  this.on = false
   linearScroll.stop()
+}
+// 开启歌词控制
+lrcContrl.open = function () {
+  this.on = true
 }
 
 export default {
