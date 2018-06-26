@@ -78,7 +78,7 @@ function lrcContrl (lrcBox, lrcContentDom, BoxLine, lrcLine, currentIndex, linea
   if (currentIndex > lrcLine - 1 - (BoxLine - middle)) {
     offset = Math.floor((lrcLine - BoxLine) / (lrcLine) * height)
   }
-  console.log(offset, lrcBox.scrollTop)
+
   if (linear) linearScroll(lrcBox, offset, lrcBox.scrollTop)
   else lrcBox.scrollTop = offset
 }
