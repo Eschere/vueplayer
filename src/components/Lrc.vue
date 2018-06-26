@@ -37,6 +37,7 @@ export default {
     next(vm => {
       vm.lrc = _currentSong.lrc
       vm.play = _play
+      fun.lrcContrl.open()
       fun.lrcContrl(vm.$refs.box, vm.$refs.lrc, 10, vm.lastIndex + 1, vm.activeIndex, false)
     })
   },
