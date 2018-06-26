@@ -66,6 +66,7 @@
     <span
       :class="play ? 'paused-icon' : 'play-icon'"
       @touchend="changeState"
+      ref="playicon"
     ></span>
     <span
       class="next"
@@ -90,7 +91,8 @@ export default {
       play: false,
       volume: 0,
       title: '',
-      artist: ''
+      artist: '',
+      audio: null
     }
   },
   created () {
@@ -118,6 +120,19 @@ export default {
 
     eventBus.$on('changeState', e => {
       this.play = e
+    })
+
+    eventBus.$on('NativeAudio', e => {
+      this.audio = e
+    })
+  },
+  mounted () {
+    // 部分浏览器安全策略限制，非用户行为无法开启播放器首次播放
+    // 改用原生事件操作播放器播放
+    this.$refs.playicon.addEventListener('touchend', e => {
+      if (this.play) {
+        this.audio.play()
+      }
     })
   },
   computed: {
@@ -160,8 +175,9 @@ export default {
 
       eventBus.$emit('changeLoop', typeList[this.typeIndex])
     },
-    changeState () {
+    changeState (e) {
       this.play = !this.play
+      if (!this.play) this.audio.pause()
       eventBus.$emit('changeState', this.play)
     },
     prev () {

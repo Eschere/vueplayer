@@ -20,14 +20,15 @@ export default {
   ],
   mounted () {
     const audio = this.audio = new Audio(this.src)
-    if (this.play) {
-      audio.play()
-        .catch(() => {
-          eventBus.$emit('changeState', false)
-        })
-    }
     audio.volume = this.volume
+
     audio.oncanplay = () => {
+      if (this.play) {
+        audio.play()
+          .catch((e) => {
+            eventBus.$emit('changeState', false)
+          })
+      }
       eventBus.$emit('duration', audio.duration)
       eventBus.$emit('volume', this.volume)
     }
@@ -39,6 +40,8 @@ export default {
       if (this.loopType === 'single-circle') audio.play()
       else eventBus.$emit('ended')
     }
+
+    eventBus.$emit('NativeAudio', audio)
   },
   watch: {
     'src' () {
@@ -49,9 +52,6 @@ export default {
     },
     'volume' (val) {
       this.audio.volume = val
-    },
-    'play' (val) {
-      val ? this.audio.play() : this.audio.pause()
     }
   },
   created () {
