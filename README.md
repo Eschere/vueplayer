@@ -1,6 +1,7 @@
 # vueplayer2
 
 > A Vue.js project
+look [production example](https://eschere.github.io/vueplayer)
 
 ## Build Setup
 
